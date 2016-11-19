@@ -1,0 +1,20 @@
+type t = unit (* TODO *)
+
+let vx = fun _ -> failwith "TODO"
+let vy = fun _ -> failwith "TODO"
+let vz = fun _ -> failwith "TODO"
+let make = fun _ -> failwith "TODO"
+let xunit = () (* TODO *)
+let yunit = () (* TODO *)
+let zunit = () (* TODO *)
+let scalprod = fun _ -> failwith "TODO"
+let norm = fun _ -> failwith "TODO"
+let add = fun _ -> failwith "TODO"
+let diff = fun _ -> failwith "TODO"
+let opp = fun _ -> failwith "TODO"
+let shift = fun _ -> failwith "TODO"
+let dist = fun _ -> failwith "TODO"
+let normalise = fun _ -> failwith "TODO"
+let dist2 = fun _ -> failwith "TODO"
+let normalised_diff = fun _ -> failwith "TODO"
+let print = fun _ -> failwith "TODO"
