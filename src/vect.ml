@@ -16,11 +16,11 @@ let norm v = sqrt (v.x *. v.x +. v.y *. v.y +. v.z *. v.z)
 let add v1 v2 = { x = v1.x +. v2.x;  y = v1.y +. v2.y; z = v1.z +. v2.z }
 let diff v1 v2 = { x = v1.x -. v2.x;  y = v1.y -. v2.y; z = v1.z -. v2.z }
 let opp v = { x = -.v.x; y = -.v.y; z = -.v.z }
-let shift v x = { x = x *. v.x; y = x *. v.y; z = x *. v.z }
+let shift x v = { x = x *. v.x; y = x *. v.y; z = x *. v.z }
 let dist v1 v2 = norm (add v1 v2)
 let normalise v = let alpha = norm v in { x = v.x /. alpha; y = v.y /. alpha; z = v.z /. alpha }
 let dist2 v1 v2 = let d = dist v1 v2 in d *. d
-let normalised_diff v1 v2 = norm (diff v1 v2)
+let normalised_diff v1 v2 = normalise (diff v1 v2)
 
 let print { x; y; z} = 
 	let s =
