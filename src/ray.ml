@@ -16,15 +16,16 @@ let read_scenario f =
     raise e
 
 let main () =
-  if Array.length Sys.argv = 0 then
-    begin
-      print_string "no scenario file given!\n";
-      exit 1;
-    end;
-  let _ = read_scenario Sys.argv.(1) in
-  print_string "Scenario file correctly read. Stop.\n";
+  (* parse the command line argument and store it in global variable references *)
+  Command.parse_command_line ();
+  
+  (* calcule the AST tree of the scenario file *)
+  let ast = read_scenario !Command.input_file in
+  print_endline ("scenario file accepted!");
   exit 0
 
-let _ =
+
+
+let () =
   if not !Sys.interactive then main ()
 

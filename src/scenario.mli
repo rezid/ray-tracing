@@ -62,9 +62,9 @@ type light = { l_dir : rotation; l_intensity : expr }
 type camera = { viewdist : expr; angle : expr }
 
 type scenario = {
-  camera : camera;
+  camera  : camera;
   ambient : expr;
-  lights : light list;
-  procs : proc list;
-  main : instruction list
+  lights  : light list;
+  procs   : proc list;
+  main    : instruction list
 }
