@@ -15,3 +15,5 @@ val texture : t -> Texture.t
    distance positive -> le point est a l'exterieur de la sphére
    distance negative -> le point est a l'interieur *)
 val distance : Vect.t -> t -> float
+
+val ray_sphere : Vect.t -> Vect.t -> t -> float

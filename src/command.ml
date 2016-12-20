@@ -8,8 +8,8 @@ let verbose = ref false
 let depth = ref 10
 
 (* hsize et vsize pour préciser largeur et hauteur de l'image *)
-let hsize = ref 100
-let vsize = ref 100
+let hsize = ref 800
+let vsize = ref 600
 
 (*  pour préciser que l'on souhaite créer un film à n images au lieu d'une simple image *)
 let anim = ref 1
@@ -32,8 +32,6 @@ let parse_command_line () =
     match (!verbose, !input_file) with 
     | true,"" -> print_endline ("Verbose mode: " ^ string_of_bool !verbose ^
                                 "\nMax number of rebonds: " ^ string_of_int !depth ^
-                                "\nPicture width: " ^ string_of_int !hsize ^
-                                "\nPicture height: " ^ string_of_int !vsize ^
                                 "\nPicture size: " ^ string_of_int !hsize ^ " * " ^ string_of_int !vsize ^
                                 "\nPicture number: " ^ string_of_int !anim);
                  print_endline ("\nyou must specify scenario source file with: -source <source>");
