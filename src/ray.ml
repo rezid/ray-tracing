@@ -1,11 +1,5 @@
 let print_if_verbose s = if (!Command.verbose) then print_endline (s)
 
-let create () = 
-  let color = Color.make_255 239 54 26 in
-  let texture = Texture.make color 0.6 1. 2. in
-  5
-
-
 let read_scenario f =
   let buf = open_in f in
   let lexbuf = Lexing.from_channel buf in
@@ -29,7 +23,12 @@ let main () =
   let _ = read_scenario !Command.input_file in
   print_if_verbose "scenario file accepted!";
   (* create the scene from the AST tree *)
-  let _ = create () in
+  let scene = Scene.create () in
+  (* calculer l'intersection et l'index de l'objet *)
+  let orig = Vect.make 4000. 0. 4000. in
+  let dir = Vect.normalise(Vect.make (4000.) 0. (-.4000.)) in
+  let (v,index) = Scene.intersect orig dir scene in
+  (* *)
   (* open ppm picture file *)
   let output_file = Ppm.openfile !Command.hsize !Command.vsize "output.ppm" in
   print_if_verbose "file output.ppm opened!";

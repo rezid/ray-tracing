@@ -2,3 +2,4 @@ src/_build
 src/*.native
 src/*.byte
 test/*
+src/output.ppm.ppm
