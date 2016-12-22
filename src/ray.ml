@@ -1,5 +1,11 @@
 let print_if_verbose s = if (!Command.verbose) then print_endline (s)
 
+let create () = 
+  let color = Color.make_255 239 54 26 in
+  let texture = Texture.make color 0.6 1. 2. in
+  5
+
+
 let read_scenario f =
   let buf = open_in f in
   let lexbuf = Lexing.from_channel buf in
@@ -22,6 +28,8 @@ let main () =
   (* calcule the AST tree of the scenario file *)
   let _ = read_scenario !Command.input_file in
   print_if_verbose "scenario file accepted!";
+  (* create the scene from the AST tree *)
+  let _ = create () in
   (* open ppm picture file *)
   let output_file = Ppm.openfile !Command.hsize !Command.vsize "output.ppm" in
   print_if_verbose "file output.ppm opened!";
@@ -38,3 +46,4 @@ let main () =
 
 let () = 
   if not !Sys.interactive then main ()
+

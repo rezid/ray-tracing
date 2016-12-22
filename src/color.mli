@@ -6,6 +6,9 @@ type t
 (* The value of each color component is between 0. and 1. *)
 val make : float -> float -> float -> t
 
+(* The value of each color component is between 0. and 1. *)
+val make_255 : int -> int -> int -> t
+
 (* Same as make 0. 0. 0. *)
 val black : t
 
