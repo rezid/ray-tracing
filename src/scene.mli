@@ -25,4 +25,4 @@ val intersect : Vect.t -> Vect.t -> t -> Vect.t * int
 val create : unit -> t
 
 (* calcule la contribution des lumiéres sur la couleur du pixel *)
-val calcule_lighting : Light.t list -> Vect.t -> float -> Color.t -> Color.t
+val calcule_lighting : t -> Vect.t -> float -> Color.t -> Vect.t -> Color.t

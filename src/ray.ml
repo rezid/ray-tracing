@@ -52,8 +52,8 @@ let main () =
         let kd = Texture.kd texture in
         (* calcule la normale du point d'intersection *)
         let n = Vect.normalise (Vect.diff inter (Sphere.center sphere)) in
-        (* calcule le suplement de couleur du au torche *)
-        let color_sup = Scene.calcule_lighting (Scene.lights scene) n kd color in
+        (* calcule le supplement de couleur du au lumiéres sauf si un objet cache cette lumiére *)
+        let color_sup = Scene.calcule_lighting scene n kd color inter in
         (* calcule la couleur avec l'equation du ray tracing *)
         let final_color = Color.may_overflow (Color.add (Color.shift ( kd *. ia) color) color_sup) in
         (* affiche la couleur *)

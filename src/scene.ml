@@ -32,15 +32,18 @@ let intersect s d scene =
     let index = find min dists in
     Vect.add s (Vect.shift min d) , index
 
-let calcule_lighting lights n kd color= 
+let calcule_lighting scene n kd color b= 
   let rec calcule_temp lights n = 
     match lights with 
     | [] -> 0.0
     | light::rest -> 
       let prod = Vect.scalprod (Vect.opp (Light.direction light)) n in
       if prod <= 0. then  calcule_temp rest n else
-        prod *. Light.intensity light +. (calcule_temp rest n) in 
-  let temp = calcule_temp lights n in 
+        let _ , index = intersect b (Vect.opp (Light.direction light)) scene in
+        if index = -1 then 
+          prod *. Light.intensity light +. (calcule_temp rest n) 
+        else calcule_temp rest n in 
+  let temp = calcule_temp scene.lights n in 
   Color.shift (temp *. kd) color
 
 let create () = 
@@ -57,7 +60,7 @@ let create () =
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
   let camera = Camera.make 20000. 0.8 in 
-  let light1 = Light.make (Vect.normalise (Vect.make (1.) (-0.) (-0.))) 0.9 in
+  let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (0.2))) 0.9 in
   make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [] [] 
 
 
