@@ -12,7 +12,7 @@ val ambiant : t -> float
 val camera : t -> Camera.t
 
 (* get the lights of the scene *)
-val lights : t -> Light.t
+val lights : t -> Light.t list
 
 (* list des spheres dans la scene *)
 val spheres : t -> Sphere.t list
