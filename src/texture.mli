@@ -8,3 +8,6 @@ type t
    - Ks: un coefficient de refexion spéculaire entre 0 et 1
    - n: un coefficient de Phong (un reel strictement positive). *)
 val make : Color.t -> float -> float -> float -> t
+
+(* get color *)
+val color : t -> Color.t

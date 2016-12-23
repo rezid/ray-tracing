@@ -12,11 +12,14 @@ type t = {
   spheres : Sphere.t list;
   boxes : Box.t list;
   planes : Plane.t list;
+  camera : Camera.t;
 }
 
 let spheres s = s.spheres
 
-let make spheres boxes planes = {spheres; boxes; planes;}
+let camera s = s.camera
+
+let make spheres boxes planes camera= {spheres; boxes; planes; camera}
 
 let intersect s d scene = 
   let dists = List.map (Sphere.distance s d) scene.spheres in 
@@ -27,14 +30,19 @@ let intersect s d scene =
   Vect.add s (Vect.shift min d) , index
       
 let create () = 
-  let color = Color.make_255 239 54 26 in (* red *)
-  let texture = Texture.make color 0.6 1. 2. in
-  let vecteur1 = Vect.make 2000. 0. 0. in
-  let vecteur2 = Vect.make 4000. 0. 0. in
-  let vecteur3 = Vect.make 6000. 0. 0. in
-  let sphere1 = Sphere.make vecteur1 1000. texture in
-  let sphere2 = Sphere.make vecteur2 500. texture in
-  let sphere3 = Sphere.make vecteur3 700. texture in
-  make [sphere1;sphere2;sphere3] [] []
+  let color0 = Color.make_255 239 54 26 in (* red *)
+  let color1 = Color.make_255 100 54 26 in (* red *)
+  let color2 = Color.make_255 0 54 0 in (* red *)
+  let texture0 = Texture.make color0 0.6 1. 2. in
+  let texture1 = Texture.make color1 0.6 1. 2. in
+  let texture2 = Texture.make color2 0.6 1. 2. in
+  let vecteur1 = Vect.make 0. 4000. 0. in
+  let vecteur2 = Vect.make 4000. 4000. 0. in
+  let vecteur3 = Vect.make 6000. 4000. 0. in
+  let sphere1 = Sphere.make vecteur1 2000. texture0 in
+  let sphere2 = Sphere.make vecteur2 500. texture1 in
+  let sphere3 = Sphere.make vecteur3 700. texture2 in
+  let camera = Camera.make 20000. 0.8 in 
+  make [sphere1;sphere2;sphere3] [] [] camera
 
 

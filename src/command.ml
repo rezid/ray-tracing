@@ -8,8 +8,8 @@ let verbose = ref false
 let depth = ref 10
 
 (* hsize et vsize pour préciser largeur et hauteur de l'image *)
-let hsize = ref 800
-let vsize = ref 600
+let hsize = ref 3840
+let vsize = ref 2160
 
 (*  pour préciser que l'on souhaite créer un film à n images au lieu d'une simple image *)
 let anim = ref 1

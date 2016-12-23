@@ -6,3 +6,5 @@ type t = {
 }
 
 let make color kd ks n = {color; kd; ks; n}
+
+let color c = c.color

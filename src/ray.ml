@@ -24,19 +24,26 @@ let main () =
   print_if_verbose "scenario file accepted!";
   (* create the scene from the AST tree *)
   let scene = Scene.create () in
-  (* calculer l'intersection et l'index de l'objet *)
-  let orig = Vect.make 4000. 0. 4000. in
-  let dir = Vect.normalise(Vect.make (4000.) 0. (-.4000.)) in
-  let (v,index) = Scene.intersect orig dir scene in
-  (* *)
+  (* calcule the z coordonee of the screen *)
+  let z = Camera.calcule_z (Scene.camera scene) !Command.hsize in
+  (* calcule the origin of the ray *)
+  let origin = Vect.make 0. 0. (Camera.viewdist (Scene.camera scene)) in
   (* open ppm picture file *)
   let output_file = Ppm.openfile !Command.hsize !Command.vsize "output.ppm" in
   print_if_verbose "file output.ppm opened!";
   (* trace rays for each pixel in the output file *)
-  for y = !Command.vsize - 1 downto 0 do
-    for x = 0 to !Command.hsize - 1 do
+  for y = !Command.vsize  downto 1 do
+    for x = -(!Command.hsize) / 2  to !Command.hsize / 2 -1  do
       let color = ref Color.black in
-      Ppm.put_next_pixel output_file (Color.to_bytes !color);
+      (* calcule direction of the ray*)
+      let dir = Vect.normalise( Vect.diff (Vect.make ((float_of_int x) +. 0.5) ((float_of_int y) -. 0.5) z) origin) in
+      (* intersection of the ray with the first objet *)
+      let (v,index) = Scene.intersect origin dir scene in
+      (* if no itersection found then color is black*)
+      if (index = -1) then Ppm.put_next_pixel output_file (Color.to_bytes !color)
+      (* else calcule color *)
+      else let color = Texture.color (Sphere.texture (List.nth (Scene.spheres scene) index)) in
+      Ppm.put_next_pixel output_file (Color.to_bytes color)
     done;
   done;
   print_if_verbose "color of each pixel calculated!";
