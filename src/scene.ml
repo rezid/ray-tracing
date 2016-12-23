@@ -11,15 +11,17 @@ let find x lst = func x lst 0
 type t = {
   ambiant : float;
   camera : Camera.t;
+  lights : Light.t list;
   spheres : Sphere.t list;
   boxes : Box.t list;
   planes : Plane.t list;
 }
 
-let make ambiant camera spheres boxes planes = {ambiant; camera; spheres; boxes; planes; }
+let make ambiant camera lights spheres boxes planes = {ambiant; camera; lights; spheres; boxes; planes; }
 
 let ambiant s = s.ambiant
 let camera s = s.camera
+let lights s = s.lights
 let spheres s = s.spheres
 
 let intersect s d scene = 
@@ -44,6 +46,7 @@ let create () =
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
   let camera = Camera.make 20000. 0.8 in 
-  make 0.2 camera [sphere1;sphere2;sphere3] [] [] 
+  let light = Light.make (Vect.normalise (Vect.make (-1.) (-1.) (-1.))) 0.7 in
+  make 0.2 camera [light;] [sphere1;sphere2;sphere3;] [] [] 
 
 
