@@ -11,3 +11,12 @@ val make : Color.t -> float -> float -> float -> t
 
 (* get color *)
 val color : t -> Color.t
+
+(* get kd *)
+val kd : t -> float
+
+(* get ks *)
+val ks : t -> float
+
+(* get n *)
+val n : t -> float

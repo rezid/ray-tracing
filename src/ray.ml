@@ -26,6 +26,8 @@ let main () =
   let scene = Scene.create () in
   (* calcule the z coordonee of the screen *)
   let z = Camera.calcule_z (Scene.camera scene) !Command.hsize in
+  (* calcule intensité de la lumiére ambiante *)
+  let ia = Scene.ambiant scene in
   (* calcule the origin of the ray *)
   let origin = Vect.make 0. 0. (Camera.viewdist (Scene.camera scene)) in
   (* open ppm picture file *)
@@ -41,9 +43,17 @@ let main () =
       let (v,index) = Scene.intersect origin dir scene in
       (* if no itersection found then color is black*)
       if (index = -1) then Ppm.put_next_pixel output_file (Color.to_bytes !color)
-      (* else calcule color *)
-      else let color = Texture.color (Sphere.texture (List.nth (Scene.spheres scene) index)) in
-      Ppm.put_next_pixel output_file (Color.to_bytes color)
+      (* la sphere intersepté *)
+      else let sphere = List.nth (Scene.spheres scene) index in
+        (* la texture de la sphere *)
+        let texture = Sphere.texture sphere in
+        (* propiétés de la texture de la sphere *)
+        let color = Texture.color texture in
+        let kd = Texture.kd texture in
+        (* calcule la couleur avec l'equation du ray tracing *)
+        let color = Color.shift ( kd *. ia) color in
+        (* affiche la couleur *)
+        Ppm.put_next_pixel output_file (Color.to_bytes color)
     done;
   done;
   print_if_verbose "color of each pixel calculated!";

@@ -8,3 +8,6 @@ type t = {
 let make color kd ks n = {color; kd; ks; n}
 
 let color c = c.color
+let kd c = c.kd
+let ks c = c.ks
+let n c = c.n

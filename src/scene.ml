@@ -9,17 +9,18 @@ let rec func x lst c = match lst with
 let find x lst = func x lst 0
 
 type t = {
+  ambiant : float;
+  camera : Camera.t;
   spheres : Sphere.t list;
   boxes : Box.t list;
   planes : Plane.t list;
-  camera : Camera.t;
 }
 
-let spheres s = s.spheres
+let make ambiant camera spheres boxes planes = {ambiant; camera; spheres; boxes; planes; }
 
+let ambiant s = s.ambiant
 let camera s = s.camera
-
-let make spheres boxes planes camera= {spheres; boxes; planes; camera}
+let spheres s = s.spheres
 
 let intersect s d scene = 
   let dists = List.map (Sphere.distance s d) scene.spheres in 
@@ -43,6 +44,6 @@ let create () =
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
   let camera = Camera.make 20000. 0.8 in 
-  make [sphere1;sphere2;sphere3] [] [] camera
+  make 0.2 camera [sphere1;sphere2;sphere3] [] [] 
 
 
