@@ -40,7 +40,7 @@ let main () =
       (* calcule direction of the ray*)
       let dir = Vect.normalise( Vect.diff (Vect.make ((float_of_int x) +. 0.5) ((float_of_int y) -. 0.5) z) origin) in
       (* intersection of the ray with the first objet *)
-      let (v,index) = Scene.intersect origin dir scene in
+      let (inter,index) = Scene.intersect origin dir scene in
       (* if no itersection found then color is black*)
       if (index = -1) then Ppm.put_next_pixel output_file (Color.to_bytes !color)
       (* la sphere intersepté *)
@@ -50,10 +50,14 @@ let main () =
         (* propiétés de la texture de la sphere *)
         let color = Texture.color texture in
         let kd = Texture.kd texture in
+        (* calcule la normale du point d'intersection *)
+        let n = Vect.normalise (Vect.diff inter (Sphere.center sphere)) in
+        (* calcule le suplement de couleur du au torche *)
+        let color_sup = Scene.calcule_lighting (Scene.lights scene) n kd color in
         (* calcule la couleur avec l'equation du ray tracing *)
-        let color = Color.shift ( kd *. ia) color in
+        let final_color = Color.may_overflow (Color.add (Color.shift ( kd *. ia) color) color_sup) in
         (* affiche la couleur *)
-        Ppm.put_next_pixel output_file (Color.to_bytes color)
+        Ppm.put_next_pixel output_file (Color.to_bytes final_color)
     done;
   done;
   print_if_verbose "color of each pixel calculated!";

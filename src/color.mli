@@ -24,5 +24,8 @@ val mult : t -> t -> t
 (* and multiplication of all compenents by a given float *)
 val shift : float -> t -> t
 
+(* remettre r g b à 1 si il depassent 1 *)
+val may_overflow : t -> t
+
 (* Optional, for debugging purpose: *)
 val print : t -> unit

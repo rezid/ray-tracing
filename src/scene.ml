@@ -29,9 +29,20 @@ let intersect s d scene =
   let min = my_min dists in
   (* let () = List.iter (Printf.printf "%f ") dists in *)
   if min = infinity then Vect.make infinity infinity infinity, -1 else
-  let index = find min dists in
-  Vect.add s (Vect.shift min d) , index
-      
+    let index = find min dists in
+    Vect.add s (Vect.shift min d) , index
+
+let calcule_lighting lights n kd color= 
+  let rec calcule_temp lights n = 
+    match lights with 
+    | [] -> 0.0
+    | light::rest -> 
+      let prod = Vect.scalprod (Vect.opp (Light.direction light)) n in
+      if prod <= 0. then  calcule_temp rest n else
+        prod *. Light.intensity light +. (calcule_temp rest n) in 
+  let temp = calcule_temp lights n in 
+  Color.shift (temp *. kd) color
+
 let create () = 
   let color0 = Color.make_255 239 54 26 in (* red *)
   let color1 = Color.make_255 100 54 26 in (* red *)
@@ -46,7 +57,7 @@ let create () =
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
   let camera = Camera.make 20000. 0.8 in 
-  let light = Light.make (Vect.normalise (Vect.make (-1.) (-1.) (-1.))) 0.7 in
-  make 0.2 camera [light;] [sphere1;sphere2;sphere3;] [] [] 
+  let light1 = Light.make (Vect.normalise (Vect.make (1.) (-0.) (-0.))) 0.9 in
+  make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [] [] 
 
 
