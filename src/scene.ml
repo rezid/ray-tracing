@@ -24,55 +24,62 @@ let camera s = s.camera
 let lights s = s.lights
 let spheres s = s.spheres
 
-let intersect s d scene = 
-  let dists = List.map (Sphere.distance s d) scene.spheres in 
-  let min = my_min dists in
-  (* let () = List.iter (Printf.printf "%f ") dists in *)
-  if min = infinity then Vect.make infinity infinity infinity, -1 else
-    let index = find min dists in
-    Vect.add s (Vect.shift min d) , index
+let intersect orig cam scene = 
+  let spheres = scene.spheres in
+  let distances = List.map (Sphere.distance orig cam) spheres in 
+  let min = my_min distances in
+  if min = infinity then None else
+    let index = find min distances in
+    let point = Vect.add orig (Vect.shift min cam) in
+    let sphere = List.nth spheres index in
+    let normal = Vect.normalise (Vect.diff point (Sphere.center sphere)) in
+    let texture = Sphere.texture sphere in
+    let color = Texture.color texture in
+    let kd = Texture.kd texture in
+    let ks = Texture.ks texture in
+    Some (Hit.make cam point normal color kd ks)
 
-let calcule_lighting scene n kd color b= 
-  let rec calcule_temp lights n = 
+let calcule_lighting scene hit = 
+  let color = Hit.color hit in
+  let kd = Hit.kd hit in
+  let normal = Hit.normal hit in
+  let point = Hit.point hit in
+  let rec calcule_temp lights = 
     match lights with 
     | [] -> 0.0
     | light::rest -> 
-      let prod = Vect.scalprod (Vect.opp (Light.direction light)) n in
-      if prod <= 0. then  calcule_temp rest n else
-        let _ , index = intersect b (Vect.opp (Light.direction light)) scene in
-        if index = -1 then 
-          prod *. Light.intensity light +. (calcule_temp rest n) 
-        else calcule_temp rest n in 
-  let temp = calcule_temp scene.lights n in 
+      let prod = Vect.scalprod (Vect.opp (Light.direction light)) normal in
+      if prod <= 0. then  calcule_temp rest else
+        let hit = intersect point (Vect.opp (Light.direction light)) scene in
+        if hit = None then 
+          prod *. Light.intensity light +. (calcule_temp rest) 
+        else calcule_temp rest in 
+  let temp = calcule_temp scene.lights in 
   Color.shift (temp *. kd) color
 
 let rec ray_trace dir origin max scene =
   (* intersection of the ray with the first objet *)
-  let (inter,index) = intersect origin dir scene in
+  let hit = intersect origin dir scene in
   (* if no itersection found then color is black*)
-  if (index = -1) then Color.black
-  (* la sphere intersepté *)
-  else let sphere = List.nth (spheres scene) index in
-    (* la texture de la sphere *)
-    let texture = Sphere.texture sphere in
-    (* propiétés de la texture de la sphere *)
-    let color = Texture.color texture in
-    let kd = Texture.kd texture in
-    let ks = Texture.ks texture in
-    (* calcule la normale du point d'intersection *)
-    let n = Vect.normalise (Vect.diff inter (Sphere.center sphere)) in
+  match hit with 
+  | None -> Color.black
+  | Some hit -> 
+    let color = Hit.color hit in
+    let kd = Hit.kd hit in
+    let ks = Hit.ks hit in
+    let point = Hit.point hit in
     (* calcule le supplement de couleur du au lumiéres sauf si un objet cache cette lumiére *)
-    let color_sup1 = calcule_lighting scene n kd color inter in
+    let color_sup = calcule_lighting scene hit in
     (* calcule intensité de la lumiére ambiante *)
     let ia = ambiant scene in
     (* calcule la couleur avec l'equation du ray tracing *)
-    let overflowed_color = Color.add (Color.shift ( kd *. ia) color) color_sup1 in
+    let overflowed_color = Color.add (Color.shift ( kd *. ia) color) color_sup in
     (* reflexion calculus *)
     if max > 0 then 
       let max = max -1 in
       (* construire le vecteur de reflexion *)
-      let v_ref = Vect.add (Vect.shift (2. *. (Vect.scalprod (Vect.opp dir) n )) n) dir in
-      let overflowed_color = Color.add overflowed_color (Color.shift ks (ray_trace v_ref inter max scene)) in
+      let v_ref = Hit.refl hit in
+      let overflowed_color = Color.add overflowed_color (Color.shift ks (ray_trace v_ref point max scene)) in
       Color.may_overflow overflowed_color else
       (* color overflow *)
       Color.may_overflow overflowed_color

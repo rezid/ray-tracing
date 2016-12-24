@@ -19,13 +19,13 @@ val spheres : t -> Sphere.t list
 
 (* calcule l'intersection d'un rayon avec le premier objet trouver
    retourne le point d'intersection et l'index de l'objet *)
-val intersect : Vect.t -> Vect.t -> t -> Vect.t * int
+val intersect : Vect.t -> Vect.t -> t -> Hit.t option
 
 (* crée la scene a partir d'un arbre AST *)
 val create : unit -> t
 
 (* calcule la contribution des lumiéres sur la couleur du pixel *)
-val calcule_lighting : t -> Vect.t -> float -> Color.t -> Vect.t -> Color.t
+val calcule_lighting : t -> Hit.t -> Color.t
 
 (* calcule la couleur *)
 val ray_trace : Vect.t -> Vect.t -> int -> t -> Color.t
