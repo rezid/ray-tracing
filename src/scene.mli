@@ -26,3 +26,6 @@ val create : unit -> t
 
 (* calcule la contribution des lumiéres sur la couleur du pixel *)
 val calcule_lighting : t -> Vect.t -> float -> Color.t -> Vect.t -> Color.t
+
+(* calcule la couleur *)
+val ray_trace : Vect.t -> Vect.t -> int -> t -> Color.t
