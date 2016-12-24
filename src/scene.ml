@@ -23,21 +23,39 @@ let ambiant s = s.ambiant
 let camera s = s.camera
 let lights s = s.lights
 let spheres s = s.spheres
+let planes s = s.planes
 
 let intersect orig cam scene = 
   let spheres = scene.spheres in
-  let distances = List.map (Sphere.distance orig cam) spheres in 
-  let min = my_min distances in
+  let boxes = scene.boxes in
+  let planes = scene.planes in
+  let distances_s = List.map (Sphere.distance orig cam) spheres in
+  let distances_b = [] in 
+  let distances_p = List.map (Plane.distance orig cam) planes in
+  let min = my_min (distances_s @ distances_b @ distances_p) in
   if min = infinity then None else
-    let index = find min distances in
+    let index = find min (distances_s @ distances_b @ distances_p) in
     let point = Vect.add orig (Vect.shift min cam) in
-    let sphere = List.nth spheres index in
-    let normal = Vect.normalise (Vect.diff point (Sphere.center sphere)) in
-    let texture = Sphere.texture sphere in
-    let color = Texture.color texture in
-    let kd = Texture.kd texture in
-    let ks = Texture.ks texture in
-    Some (Hit.make cam point normal color kd ks)
+
+    if index < List.length spheres then
+      let sphere = List.nth spheres index in
+      let normal = Vect.normalise (Vect.diff point (Sphere.center sphere)) in
+      let texture = Sphere.texture sphere in
+      let color = Texture.color texture in
+      let kd = Texture.kd texture in
+      let ks = Texture.ks texture in
+      Some (Hit.make cam point normal color kd ks)
+    else (*if index <= (List.length planes) + (List.length spheres)*)
+      let index = index - List.length spheres in
+      let plane = List.nth planes index in
+      let normal =  Plane.normal plane in
+      let texture = Plane.texture plane in
+      let color = Texture.color texture in
+      let kd = Texture.kd texture in
+      let ks = Texture.ks texture in
+      Some (Hit.make cam point normal color kd ks)
+
+
 
 let calcule_lighting scene hit = 
   let color = Hit.color hit in
@@ -88,17 +106,23 @@ let create () =
   let color0 = Color.make_255 239 54 26 in (* 239 54 26 red *)
   let color1 = Color.make_255 100 54 26 in 
   let color2 = Color.make_255 0 54 0 in 
+  let color3 = Color.make_255 200 200 200 in 
   let texture0 = Texture.make color0 0.6 1. 2. in
   let texture1 = Texture.make color1 0.6 0. 2. in
   let texture2 = Texture.make color2 0.6 0. 2. in
+  let texture3 = Texture.make color2 0.4 0.6 2. in
   let vecteur1 = Vect.make 0. 2000. 0. in
   let vecteur2 = Vect.make 4000. 2000. (1000.) in
   let vecteur3 = Vect.make 6000. 2000. 0. in
   let sphere1 = Sphere.make vecteur1 2000. texture0 in
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
+
+  let normal = Vect.normalise (Vect.make (0.) (-1.) (0.)) in
+  let plane1 = Plane.make normal (-4100.) texture3 in
+
   let camera = Camera.make 20000. 0.8 in 
-  let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (0.))) 0.9 in
-  make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [] [] 
+  let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 0.9 in
+  make 0.6 camera [light1] [sphere1;sphere2;sphere3] [] [plane1] 
 
 

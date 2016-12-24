@@ -17,6 +17,9 @@ val lights : t -> Light.t list
 (* list des spheres dans la scene *)
 val spheres : t -> Sphere.t list
 
+(* list des plan dans la scene *)
+val planes : t -> Plane.t list
+
 (* calcule l'intersection d'un rayon avec le premier objet trouver
    retourne le point d'intersection et l'index de l'objet *)
 val intersect : Vect.t -> Vect.t -> t -> Hit.t option
