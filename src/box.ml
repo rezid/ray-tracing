@@ -18,7 +18,7 @@ let make c lx ly lz texture =
     center = Vect.add c (Vect.make 0. 0. (lz /. 2.));
     distance = Vect.vz c +. (lz /. 2.) ;
     center_rev = Vect.diff c (Vect.make 0. 0. (lz /. 2.));
-    distance_rev = Vect.vz c -. (lz /. 2.);
+    distance_rev = (lz /. 2.) -.  Vect.vz c;
     demi_dist = lz /. 2.;
   } in
   let face2 = {
@@ -26,7 +26,7 @@ let make c lx ly lz texture =
     center = Vect.add c (Vect.make (lx /. 2.) 0. 0.);
     distance = Vect.vx c +. (lx /. 2.) ;
     center_rev = Vect.diff c (Vect.make (lx /. 2.) 0. 0.);
-    distance_rev = Vect.vx c -. (lx /. 2.);
+    distance_rev = (lx /. 2.) -. Vect.vx c;
     demi_dist = lx /. 2.;
   } in
   let face3 = {
@@ -34,7 +34,7 @@ let make c lx ly lz texture =
     center = Vect.add c (Vect.make 0. (ly /. 2.) 0.);
     distance = Vect.vy c +. (ly /. 2.) ;
     center_rev = Vect.diff c (Vect.make 0. (ly /. 2.) 0.);
-    distance_rev = Vect.vy c -. (ly /. 2.);
+    distance_rev = (ly /. 2.) -. Vect.vy c;
     demi_dist = ly /. 2.;
   } in {
     faces = [face1;face2;face3];
@@ -51,27 +51,28 @@ let demi_dist f = f.demi_dist
 let faces boite = boite.faces
 let texture boite = boite.texture
 
-let distance v_orig v_dir boite = 
-
-	
-	
+let distance v_orig v_dir boite =
   let n1 = (List.nth boite.faces 0).normal in
   let d1 = (List.nth boite.faces 0).distance in
+  let d1_rev = (List.nth boite.faces 0).distance_rev in
   let l1 = (List.nth boite.faces 0).demi_dist in
   let c1 = (List.nth boite.faces 0).center in
   let c1_rev = (List.nth boite.faces 0).center_rev in
+  
 
   let n2 = (List.nth boite.faces 1).normal in
   let d2 = (List.nth boite.faces 1).distance in
+  let d2_rev = (List.nth boite.faces 1).distance_rev in
   let l2 = (List.nth boite.faces 1).demi_dist in
   let c2 = (List.nth boite.faces 1).center in
   let c2_rev = (List.nth boite.faces 1).center_rev in
 
   let n3 = (List.nth boite.faces 2).normal in
   let d3 = (List.nth boite.faces 2).distance in
+  let d3_rev = (List.nth boite.faces 2).distance_rev in
   let l3 = (List.nth boite.faces 2).demi_dist in
   let c3 = (List.nth boite.faces 2).center in
-  let c3_rev = (List.nth boite.faces 2).center_rev in
+  let c3_rev = (List.nth boite.faces 2).center_rev in  
 
   let texture = boite.texture in
 
@@ -80,30 +81,28 @@ let distance v_orig v_dir boite =
     | [] -> (infinity, None)
     | face::rest -> 
 
-      let v_n1, v_n2, v_n3, v_c1, v_c2, s_d1, s_l2, s_l3 = 
+      let v_n1, v_n2, v_n3, v_c1, v_c2, s_d1, s_d2, s_l2, s_l3 = 
         match List.length faces with
-        | 1 -> n3, n1, n2, c3, c3_rev, d3, l1, l2
-        | 2 -> n2, n3, n1, c2, c2_rev, d2, l3, l1
-        | 3 -> n1, n2, n3, c1, c1_rev, d1, l2, l3
+        | 1 -> n3, n1, n2, c3, c3_rev, d3, d3_rev, l1, l2
+        | 2 -> n2, n3, n1, c2, c2_rev, d2, d2_rev, l3, l1
+        | 3 -> n1, n2, n3, c1, c1_rev, d1, d1_rev, l2, l3
         | _ -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
       in
 
-
       let s_temp1 = Vect.scalprod v_dir v_n1 in
 
-      let current = if s_temp1 > 0. then Some (Vect.opp v_n1,v_c2) 
-        else if s_temp1 < 0. then  Some (v_n1,v_c1)
+      let current = if s_temp1 > 0. then Some (Vect.opp v_n1,v_c2,s_d2) 
+        else if s_temp1 < 0. then  Some (v_n1,v_c1,s_d1)
         else None in
-
+	
       match current with
       | None -> calcule_temp rest
-      | Some ( x, y ) -> 
-
-	  
+      | Some ( x, y, z ) -> 
 
         let v_n1 = x in 
         let v_c = y in
-        let plane = Plane.make v_n1 d1 texture in
+		let s_d1 = z in
+        let plane = Plane.make v_n1 s_d1 texture in
         let dd = Plane.distance v_orig v_dir plane in
         let v_i = Vect.add v_orig (Vect.shift dd v_dir) in
         let v_ci = Vect.diff v_i v_c in
@@ -111,17 +110,14 @@ let distance v_orig v_dir boite =
         let min1 = abs_float ( Vect.scalprod v_ci v_n2) in
         let min2 = abs_float ( Vect.scalprod v_ci v_n3) in
 
-		(*---------------------------------------------------------------------
-		Vect.print v_n1;
-		Vect.print v_n2;
-		Vect.print v_n3;
-		Vect.print v_n1;
-		Vect.print v_c;*)
-		(*let f p = print_newline (Printf.printf "hhhh ----- %f ------ hhhhhh" p) in 
-			f s_d1;
-			f s_l2;
-			f s_l3;
-	  ---------------------------------------------------------------------*)
+        (*---------------------------------------------------------------------
+        
+        let f p = print_newline (Printf.printf "hhhh ----- %f ------ hhhhhh" p) in 
+          f min1;
+		  f s_l2;
+		  f min2;
+		  f s_l3;*)
+        (*---------------------------------------------------------------------*)
 
         if (min1 <= s_l2 && min2 <= s_l3 ) then (dd, Some v_n1)
         else calcule_temp rest

@@ -143,6 +143,6 @@ let create () =
 
   let camera = Camera.make 20000. 0.8 in 
   let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 1. in
-  make 0.6 camera [light1] [] [box1;] [] 
+  make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [box1;] [plane1;plane2] 
 
 
