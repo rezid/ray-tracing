@@ -6,8 +6,15 @@ type t
 (* type representant une face et son opposée *)
 type p 
 
+(* construire une boite
+    param:
+    - c : centre
+    - lx, ly et lz : largeur, hauteur et profendeur de la boite
+    - texture de la boite *)
+val make : Vect.t -> float -> float -> float -> Texture.t -> t
+
 (* vecteur unitaire normal d'une face *)
-val center : p -> Vect.t
+val normal : p -> Vect.t
 
 (* centre d'une face *)
 val center : p -> Vect.t
@@ -24,13 +31,18 @@ val distance_rev : p -> float
 (* demi distance entre deux faces opposées *)
 val demi_dist : p -> float
 
-(* texture d'une face *)
-val texture : p -> Texture.t
-
 (* texture d'une boite *)
 val texture : t -> Texture.t
 
-(* la distance entre un point et le centre de la boite 
-   distance positive -> le point est a l'exterieur de la sphére
-   distance negative -> le point est a l'interieur *)
-val distance : Vect.t -> t -> float
+(* faces d'une boite *)
+val faces : t -> p list
+
+(* distance parcourut par un rayon avant d'attendre le boite
+parametre:
+    s : l'origine du rayon
+    d : direction du rayon
+sortie:
+	infinity : le rayon n'atteind jamais la boite 
+	d > 0 : le point est a l'interieur de la boite 
+	infinity : le point est a l'exterieur de la boite *)
+val distance : Vect.t -> Vect.t -> t -> float * (Vect.t option)

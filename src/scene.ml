@@ -30,23 +30,37 @@ let intersect orig cam scene =
   let boxes = scene.boxes in
   let planes = scene.planes in
   let distances_s = List.map (Sphere.distance orig cam) spheres in
-  let distances_b = [] in 
+
+  let distances_normal_b = List.map (Box.distance orig cam) boxes in 
+  let distances_b = List.map (fst) distances_normal_b in 
+
   let distances_p = List.map (Plane.distance orig cam) planes in
   let min = my_min (distances_s @ distances_b @ distances_p) in
   if min = infinity then None else
     let index = find min (distances_s @ distances_b @ distances_p) in
     let point = Vect.add orig (Vect.shift min cam) in
-
     if index < List.length spheres then
-      let sphere = List.nth spheres index in
+      let sphere = List.nth spheres index  in
       let normal = Vect.normalise (Vect.diff point (Sphere.center sphere)) in
       let texture = Sphere.texture sphere in
       let color = Texture.color texture in
       let kd = Texture.kd texture in
       let ks = Texture.ks texture in
       Some (Hit.make cam point normal color kd ks)
-    else (*if index <= (List.length planes) + (List.length spheres)*)
+    else if index < (List.length boxes) + (List.length spheres) then
       let index = index - List.length spheres in
+      let box =  List.nth boxes index in
+      let normal = match snd (List.nth distances_normal_b index) with 
+        | None -> failwith "not possible"
+        | Some v -> v
+      in
+      let texture = Box.texture box in
+      let color = Texture.color texture in
+      let kd = Texture.kd texture in
+      let ks = Texture.ks texture in
+      Some (Hit.make cam point normal color kd ks)
+    else 
+      let index = index - List.length spheres - List.length boxes in
       let plane = List.nth planes index in
       let normal =  Plane.normal plane in
       let texture = Plane.texture plane in
@@ -54,6 +68,7 @@ let intersect orig cam scene =
       let kd = Texture.kd texture in
       let ks = Texture.ks texture in
       Some (Hit.make cam point normal color kd ks)
+
 
 
 
@@ -110,19 +125,24 @@ let create () =
   let texture0 = Texture.make color0 0.6 1. 2. in
   let texture1 = Texture.make color1 0.6 0. 2. in
   let texture2 = Texture.make color2 0.6 0. 2. in
-  let texture3 = Texture.make color2 0.4 0.6 2. in
-  let vecteur1 = Vect.make 0. 2000. 0. in
+  let texture3 = Texture.make color3 0. 1. 2. in
+  let vecteur1 = Vect.make (-4000.) 2000. 0. in
   let vecteur2 = Vect.make 4000. 2000. (1000.) in
   let vecteur3 = Vect.make 6000. 2000. 0. in
   let sphere1 = Sphere.make vecteur1 2000. texture0 in
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
 
-  let normal = Vect.normalise (Vect.make (0.) (-1.) (0.)) in
-  let plane1 = Plane.make normal (-4100.) texture3 in
+  let box1 = Box.make (Vect.make (0.) 6000. 3500.) 1000. 2000. 7000. texture0 in
+
+  let normal1 = Vect.normalise (Vect.make (-1.) (0.) (1.)) in
+  let plane1 = Plane.make normal1 (-5000.) texture3 in
+
+   let normal2 = Vect.normalise (Vect.make (1.) (0.) (1.)) in
+  let plane2 = Plane.make normal2 (-5000.) texture3 in
 
   let camera = Camera.make 20000. 0.8 in 
-  let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 0.9 in
-  make 0.6 camera [light1] [sphere1;sphere2;sphere3] [] [plane1] 
+  let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 1. in
+  make 0.6 camera [light1] [] [box1;] [] 
 
 
