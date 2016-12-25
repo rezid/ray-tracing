@@ -110,15 +110,6 @@ let distance v_orig v_dir boite =
         let min1 = abs_float ( Vect.scalprod v_ci v_n2) in
         let min2 = abs_float ( Vect.scalprod v_ci v_n3) in
 
-        (*---------------------------------------------------------------------
-        
-        let f p = print_newline (Printf.printf "hhhh ----- %f ------ hhhhhh" p) in 
-          f min1;
-		  f s_l2;
-		  f min2;
-		  f s_l3;*)
-        (*---------------------------------------------------------------------*)
-
         if (min1 <= s_l2 && min2 <= s_l3 ) then (dd, Some v_n1)
         else calcule_temp rest
   in

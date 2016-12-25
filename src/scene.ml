@@ -46,7 +46,8 @@ let intersect orig cam scene =
       let color = Texture.color texture in
       let kd = Texture.kd texture in
       let ks = Texture.ks texture in
-      Some (Hit.make cam point normal color kd ks)
+      let phong = Texture.n texture in
+      Some (Hit.make cam point normal color kd ks phong)
     else if index < (List.length boxes) + (List.length spheres) then
       let index = index - List.length spheres in
       let box =  List.nth boxes index in
@@ -58,7 +59,8 @@ let intersect orig cam scene =
       let color = Texture.color texture in
       let kd = Texture.kd texture in
       let ks = Texture.ks texture in
-      Some (Hit.make cam point normal color kd ks)
+      let phong = Texture.n texture in
+      Some (Hit.make cam point normal color kd ks phong)
     else 
       let index = index - List.length spheres - List.length boxes in
       let plane = List.nth planes index in
@@ -67,7 +69,8 @@ let intersect orig cam scene =
       let color = Texture.color texture in
       let kd = Texture.kd texture in
       let ks = Texture.ks texture in
-      Some (Hit.make cam point normal color kd ks)
+      let phong = Texture.n texture in
+      Some (Hit.make cam point normal color kd ks phong)
 
 
 
@@ -75,7 +78,10 @@ let intersect orig cam scene =
 let calcule_lighting scene hit = 
   let color = Hit.color hit in
   let kd = Hit.kd hit in
+  let ks = Hit.ks hit in
+  let n = Hit.phong hit in
   let normal = Hit.normal hit in
+  
   let point = Hit.point hit in
   let rec calcule_temp lights = 
     match lights with 
@@ -83,12 +89,14 @@ let calcule_lighting scene hit =
     | light::rest -> 
       let prod = Vect.scalprod (Vect.opp (Light.direction light)) normal in
       if prod <= 0. then  calcule_temp rest else
-        let hit = intersect point (Vect.opp (Light.direction light)) scene in
-        if hit = None then 
-          prod *. Light.intensity light +. (calcule_temp rest) 
+        let hit1 = intersect point (Vect.opp (Light.direction light)) scene in
+        if hit1 = None then 
+          let bissect = Hit.bisecting_direction hit (Light.direction light) in
+          let prod2 = (Vect.scalprod normal bissect) ** (float_of_int n) in 
+          (kd *. prod *. (Light.intensity light)) +. (ks *. prod2 *. (Light.intensity light)) +. (calcule_temp rest) 
         else calcule_temp rest in 
   let temp = calcule_temp scene.lights in 
-  Color.shift (temp *. kd) color
+  Color.shift temp color
 
 let rec ray_trace dir origin max scene =
   (* intersection of the ray with the first objet *)
@@ -122,10 +130,10 @@ let create () =
   let color1 = Color.make_255 100 54 26 in 
   let color2 = Color.make_255 0 54 0 in 
   let color3 = Color.make_255 200 200 200 in 
-  let texture0 = Texture.make color0 0.6 1. 2. in
-  let texture1 = Texture.make color1 0.6 0. 2. in
-  let texture2 = Texture.make color2 0.6 0. 2. in
-  let texture3 = Texture.make color3 0. 1. 2. in
+  let texture0 = Texture.make color0 0.6 1. 2 in
+  let texture1 = Texture.make color1 0.6 0. 2 in
+  let texture2 = Texture.make color2 0.6 0. 2 in
+  let texture3 = Texture.make color3 0. 1. 2 in
   let vecteur1 = Vect.make (-4000.) 2000. 0. in
   let vecteur2 = Vect.make 4000. 2000. (1000.) in
   let vecteur3 = Vect.make 6000. 2000. 0. in
@@ -143,6 +151,6 @@ let create () =
 
   let camera = Camera.make 20000. 0.8 in 
   let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 1. in
-  make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [box1;] [plane1;plane2] 
+  make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [box1;] [] 
 
 

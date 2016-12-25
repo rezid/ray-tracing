@@ -7,7 +7,7 @@ type t
    - Kd: un coefficient de refexion diffuse entre 0 et 1
    - Ks: un coefficient de refexion spéculaire entre 0 et 1
    - n: un coefficient de Phong (un reel strictement positive). *)
-val make : Color.t -> float -> float -> float -> t
+val make : Color.t -> float -> float -> int -> t
 
 (* get color *)
 val color : t -> Color.t
@@ -19,4 +19,4 @@ val kd : t -> float
 val ks : t -> float
 
 (* get n *)
-val n : t -> float
+val n : t -> int
