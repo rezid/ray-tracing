@@ -31,3 +31,6 @@ let apply_rotation plane rotation =
 
 let apply_translation plane v =
   { normal = plane.normal; distance = plane.distance +. (Vect.scalprod v plane.normal); texture = (plane.texture);}
+
+let apply_dilatation plane k =
+  { normal = plane.normal; distance = plane.distance *. k; texture = (plane.texture);}

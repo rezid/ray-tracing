@@ -179,3 +179,35 @@ let apply_translation box v =
         } in
         {faces = [f1;f2;f3]; texture = box.texture;}
   | _ -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+
+let apply_dilatation box k =
+  match box.faces with
+  |[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | _::[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | _::_::[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | f1::f2::f3::[] -> let f1 = {
+          normal = f1.normal;
+          center = Vect.shift k f1.center;
+          distance = f1.distance *. k;
+          center_rev = Vect.shift k f1.center_rev;
+          distance_rev = f1.distance_rev *. k;
+          demi_dist = f1.demi_dist *. k;
+        } in
+        let f2 = {
+          normal = f2.normal;
+          center = Vect.shift k f2.center;
+          distance = f2.distance  *. k;
+          center_rev = Vect.shift k f2.center_rev;
+          distance_rev = f2.distance_rev *. k;
+          demi_dist = f2.demi_dist *. k;
+        } in
+        let f3 = {
+          normal = f3.normal;
+          center = Vect.shift k f3.center;
+          distance = f3.distance  *. k;
+          center_rev = Vect.shift k f3.center_rev;
+          distance_rev = f3.distance_rev *. k;
+          demi_dist = f3.demi_dist *. k;
+        } in
+        {faces = [f1;f2;f3]; texture = box.texture;}
+  | _ -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."

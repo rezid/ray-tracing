@@ -25,5 +25,5 @@ sortie:
 val distance : Vect.t -> Vect.t -> t -> float
 
 val apply_rotation : t -> Rotation.t -> t
-
 val apply_translation : t -> Vect.t -> t
+val apply_dilatation : t -> float ->  t

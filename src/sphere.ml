@@ -28,3 +28,6 @@ let apply_rotation sphere rotation =
 
 let apply_translation sphere v =
   {c = Vect.add sphere.c v; r = sphere.r; t = sphere.t;}
+
+let apply_dilatation sphere k =
+  {c = Vect.shift k sphere.c; r = sphere.r *. k; t = sphere.t;}
