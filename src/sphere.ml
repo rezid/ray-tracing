@@ -21,3 +21,7 @@ let distance s d sphere =
   let s_ab = sqrt (sphere.r *. sphere.r -. s_ac2) in
   let s_sb = s_sa -. s_ab in
   if (s_sc < sphere.r) then infinity else s_sb
+
+let apply_rotation sphere rotation = 
+	let center = Rotation.apply rotation (sphere.c) in
+	make center sphere.r sphere.t

@@ -23,3 +23,5 @@ sortie:
 	d > 0 : le point est a l'interieur de la sphere 
 	infinity : le point est a l'exterieur de la sphere *)
 val distance : Vect.t -> Vect.t -> t -> float
+
+val apply_rotation : t -> Rotation.t -> t

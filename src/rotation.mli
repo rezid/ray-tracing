@@ -1,4 +1,3 @@
-
 (* Rotations dans l'espace tri-dimensionnel. *)
 
 (* Une rotation est créée à partir de trois nombres [rx], [ry] et [rz]
@@ -30,7 +29,6 @@ val id : t
 val compose : t -> t -> t
 
 (*s [(applique r v)] applique la rotation [r] au vecteur [v]. *)
-
 val apply : t -> Vect.t -> Vect.t
 
 (* Eventuellement, pour du debug: *)

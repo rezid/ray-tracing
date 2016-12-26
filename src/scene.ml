@@ -141,7 +141,8 @@ let create () =
   let sphere2 = Sphere.make vecteur2 500. texture1 in
   let sphere3 = Sphere.make vecteur3 700. texture2 in
 
-  let box1 = Box.make (Vect.make (0.) 6000. 3500.) 1000. 2000. 7000. texture0 in
+  let box1 = Box.make (Vect.make (3000.) 4000. 3500.) 1000. 2000. 7000. texture0 in
+  let box1 = Box.apply_rotation box1 (Rotation.make 0. 0.785 0.) in
 
   let normal1 = Vect.normalise (Vect.make (-1.) (0.) (1.)) in
   let plane1 = Plane.make normal1 (-5000.) texture3 in
@@ -151,6 +152,7 @@ let create () =
 
   let camera = Camera.make 20000. 0.8 in 
   let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 1. in
-  make 0.6 camera [light1] [sphere1;sphere2;sphere3;] [box1;] [] 
+  let light2 = Light.make (Vect.normalise (Vect.make (1.) (0.) (0.))) 1. in
+  make 0.6 camera [light1;light2] [sphere1;sphere2;sphere3;] [box1;] [] 
 
 

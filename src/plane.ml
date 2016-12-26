@@ -7,7 +7,7 @@ type t = {
 let make normal distance texture = { normal; distance; texture; }
 
 let normal p = p.normal
-let distance p = p.distance
+let dist p = p.distance
 let texture p = p.texture
 
 let distance v_os v_d plan = 
@@ -18,3 +18,7 @@ let distance v_os v_d plan =
     let s_temp2 = Vect.scalprod v_n v_d in 
     if s_temp2 >= 0. then infinity else 
       (s_d -. s_temp1) /. s_temp2
+
+let apply_rotation plane rotation =
+	let normal = Rotation.apply rotation (plane.normal) in
+	make normal (plane.distance) (plane.texture)

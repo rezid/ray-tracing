@@ -58,7 +58,7 @@ let distance v_orig v_dir boite =
   let l1 = (List.nth boite.faces 0).demi_dist in
   let c1 = (List.nth boite.faces 0).center in
   let c1_rev = (List.nth boite.faces 0).center_rev in
-  
+
 
   let n2 = (List.nth boite.faces 1).normal in
   let d2 = (List.nth boite.faces 1).distance in
@@ -94,14 +94,14 @@ let distance v_orig v_dir boite =
       let current = if s_temp1 > 0. then Some (Vect.opp v_n1,v_c2,s_d2) 
         else if s_temp1 < 0. then  Some (v_n1,v_c1,s_d1)
         else None in
-	
+
       match current with
       | None -> calcule_temp rest
       | Some ( x, y, z ) -> 
 
         let v_n1 = x in 
         let v_c = y in
-		let s_d1 = z in
+        let s_d1 = z in
         let plane = Plane.make v_n1 s_d1 texture in
         let dd = Plane.distance v_orig v_dir plane in
         let v_i = Vect.add v_orig (Vect.shift dd v_dir) in
@@ -116,3 +116,34 @@ let distance v_orig v_dir boite =
   calcule_temp boite.faces
 
 
+let apply_rotation box rotation =
+  match box.faces with
+  |[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | _::[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | _::_::[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | f1::f2::f3::[] -> let f1 = {
+          normal = Rotation.apply rotation f1.normal;
+          center = Rotation.apply rotation f1.center;
+          distance = f1.distance;
+          center_rev = Rotation.apply rotation f1.center_rev;
+          distance_rev = f1.distance_rev;
+          demi_dist = f1.demi_dist;
+        } in
+        let f2 = {
+          normal = Rotation.apply rotation f2.normal;
+          center = Rotation.apply rotation f2.center;
+          distance = f2.distance;
+          center_rev = Rotation.apply rotation f2.center_rev;
+          distance_rev = f2.distance_rev;
+          demi_dist = f2.demi_dist;
+        } in
+        let f3 = {
+          normal = Rotation.apply rotation f3.normal;
+          center = Rotation.apply rotation f3.center;
+          distance = f3.distance;
+          center_rev = Rotation.apply rotation f3.center_rev;
+          distance_rev = f3.distance_rev;
+          demi_dist = f3.demi_dist;
+        } in
+        {faces = [f1;f2;f3]; texture = box.texture;}
+  | _ -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."

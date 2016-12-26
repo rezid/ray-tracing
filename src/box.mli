@@ -46,3 +46,6 @@ sortie:
 	d > 0 : le point est a l'interieur de la boite 
 	infinity : le point est a l'exterieur de la boite *)
 val distance : Vect.t -> Vect.t -> t -> float * (Vect.t option)
+
+
+val apply_rotation : t -> Rotation.t -> t

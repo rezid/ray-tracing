@@ -9,7 +9,7 @@ val make : Vect.t -> float -> Texture.t -> t
 val normal : t -> Vect.t
 
 (* distance relative entre l'origine et le plan*)
-val distance : t -> float
+val dist : t -> float
 
 (* texture d'une sphére *)
 val texture : t -> Texture.t
@@ -23,3 +23,5 @@ sortie:
 	d > 0 : le point est a l'interieur de la sphere 
 	infinity : le point est a l'exterieur de la sphere *)
 val distance : Vect.t -> Vect.t -> t -> float
+
+val apply_rotation : t -> Rotation.t -> t
