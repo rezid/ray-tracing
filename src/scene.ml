@@ -133,7 +133,7 @@ let create () =
   let texture0 = Texture.make color0 0.6 1. 2 in
   let texture1 = Texture.make color1 0.6 0. 2 in
   let texture2 = Texture.make color2 0.6 0. 2 in
-  let texture3 = Texture.make color3 0. 1. 2 in
+  let texture3 = Texture.make color3 0. 1. 0 in
   let vecteur1 = Vect.make (-4000.) 2000. 0. in
   let vecteur2 = Vect.make 4000. 2000. (1000.) in
   let vecteur3 = Vect.make 6000. 2000. 0. in
@@ -144,11 +144,8 @@ let create () =
   let box1 = Box.make (Vect.make (3000.) 4000. 3500.) 1000. 2000. 7000. texture0 in
   let box1 = Box.apply_rotation box1 (Rotation.make 0. 0.785 0.) in
 
-  let normal1 = Vect.normalise (Vect.make (-1.) (0.) (1.)) in
-  let plane1 = Plane.make normal1 (-5000.) texture3 in
-
-   let normal2 = Vect.normalise (Vect.make (1.) (0.) (1.)) in
-  let plane2 = Plane.make normal2 (-5000.) texture3 in
+  let plane1 = Plane.make (-5000.) texture3 in
+  let plane1 = Plane.apply_rotation plane1 (Rotation.make 1.6 0. 0.) in
 
   let camera = Camera.make 20000. 0.8 in 
 

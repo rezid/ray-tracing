@@ -49,3 +49,5 @@ val distance : Vect.t -> Vect.t -> t -> float * (Vect.t option)
 
 
 val apply_rotation : t -> Rotation.t -> t
+
+val apply_translation : t -> Vect.t -> t

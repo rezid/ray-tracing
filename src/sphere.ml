@@ -24,4 +24,7 @@ let distance s d sphere =
 
 let apply_rotation sphere rotation = 
 	let center = Rotation.apply rotation (sphere.c) in
-	make center sphere.r sphere.t
+	{c = center; r = sphere.r; t = sphere.t;}
+
+let apply_translation sphere v =
+  {c = Vect.add sphere.c v; r = sphere.r; t = sphere.t;}

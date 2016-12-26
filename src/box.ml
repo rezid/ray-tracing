@@ -102,7 +102,7 @@ let distance v_orig v_dir boite =
         let v_n1 = x in 
         let v_c = y in
         let s_d1 = z in
-        let plane = Plane.make v_n1 s_d1 texture in
+        let plane = Plane.make_v1 v_n1 s_d1 texture in
         let dd = Plane.distance v_orig v_dir plane in
         let v_i = Vect.add v_orig (Vect.shift dd v_dir) in
         let v_ci = Vect.diff v_i v_c in
@@ -143,6 +143,38 @@ let apply_rotation box rotation =
           distance = f3.distance;
           center_rev = Rotation.apply rotation f3.center_rev;
           distance_rev = f3.distance_rev;
+          demi_dist = f3.demi_dist;
+        } in
+        {faces = [f1;f2;f3]; texture = box.texture;}
+  | _ -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+
+let apply_translation box v =
+  match box.faces with
+  |[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | _::[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | _::_::[] -> failwith "Face number of box incorrect (should be 6 = 3 * 2)."
+  | f1::f2::f3::[] -> let f1 = {
+          normal = f1.normal;
+          center = Vect.add v f1.center;
+          distance = f1.distance +. (Vect.scalprod v f1.normal);
+          center_rev = Vect.add v f1.center_rev;
+          distance_rev = f1.distance_rev -. (Vect.scalprod v f1.normal);
+          demi_dist = f1.demi_dist;
+        } in
+        let f2 = {
+          normal = f2.normal;
+          center = Vect.add v f2.center;
+          distance = f2.distance  +. (Vect.scalprod v f2.normal);
+          center_rev = Vect.add v f2.center_rev;
+          distance_rev = f2.distance_rev -. (Vect.scalprod v f2.normal);
+          demi_dist = f2.demi_dist;
+        } in
+        let f3 = {
+          normal = f3.normal;
+          center = Vect.add v f3.center;
+          distance = f3.distance  +. (Vect.scalprod v f3.normal);
+          center_rev = Vect.add v f3.center_rev;
+          distance_rev = f3.distance_rev -. (Vect.scalprod v f3.normal);
           demi_dist = f3.demi_dist;
         } in
         {faces = [f1;f2;f3]; texture = box.texture;}

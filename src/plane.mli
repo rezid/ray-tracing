@@ -3,7 +3,10 @@
 type t
 
 (* construction d'un plan *)
-val make : Vect.t -> float -> Texture.t -> t
+val make : float -> Texture.t -> t
+
+(* construction d'un plan *)
+val make_v1 : Vect.t -> float -> Texture.t -> t
 
 (* vecteur unitaire normale d'un plan *)
 val normal : t -> Vect.t
@@ -25,3 +28,5 @@ sortie:
 val distance : Vect.t -> Vect.t -> t -> float
 
 val apply_rotation : t -> Rotation.t -> t
+
+val apply_translation : t -> Vect.t -> t

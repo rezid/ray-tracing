@@ -4,7 +4,13 @@ type t = {
   texture : Texture.t;
 }
 
-let make normal distance texture = { normal; distance; texture; }
+let make distance texture = { 
+  normal = Vect.make 0. 1. 0.;
+  distance; 
+  texture; 
+}
+
+let make_v1 normal distance texture = {normal; distance; texture}
 
 let normal p = p.normal
 let dist p = p.distance
@@ -21,4 +27,7 @@ let distance v_os v_d plan =
 
 let apply_rotation plane rotation =
 	let normal = Rotation.apply rotation (plane.normal) in
-	make normal (plane.distance) (plane.texture)
+	{ normal; distance = (plane.distance); texture = (plane.texture);}
+
+let apply_translation plane v =
+  { normal = plane.normal; distance = plane.distance +. (Vect.scalprod v plane.normal); texture = (plane.texture);}
