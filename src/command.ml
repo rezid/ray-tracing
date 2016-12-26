@@ -12,7 +12,7 @@ let hsize = ref 3840
 let vsize = ref 2160
 
 (*  pour préciser que l'on souhaite créer un film à n images au lieu d'une simple image *)
-let anim = ref 1
+let anim = ref 0
 
 (* lire les options en ligne de commande *)
 let parse_command_line () = 

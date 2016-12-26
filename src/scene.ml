@@ -125,31 +125,44 @@ let rec ray_trace dir origin max scene =
       (* color overflow *)
       Color.may_overflow overflowed_color
 
-let create () = 
-  let color0 = Color.make_255 239 54 26 in (* 239 54 26 red *)
-  let color1 = Color.make_255 100 54 26 in 
-  let color2 = Color.make_255 0 54 0 in 
-  let color3 = Color.make_255 200 200 200 in 
-  let texture0 = Texture.make color0 0.6 1. 2 in
-  let texture1 = Texture.make color1 0.6 0. 2 in
-  let texture2 = Texture.make color2 0.6 0. 2 in
-  let texture3 = Texture.make color3 0. 1. 0 in
-  let vecteur1 = Vect.make (-4000.) 2000. 0. in
-  let vecteur2 = Vect.make 4000. 2000. (1000.) in
-  let vecteur3 = Vect.make 6000. 2000. 0. in
-  let sphere1 = Sphere.make vecteur1 2000. texture0 in
-  let sphere2 = Sphere.make vecteur2 500. texture1 in
-  let sphere3 = Sphere.make vecteur3 700. texture2 in
+let create time  = 
+  let time = (float_of_int time) /.10. in
+  let pi = 4.0 *. atan 1.0 in
+  let earthr = 8000. in
+  let moonr = 1500. in
 
-  let box1 = Box.make (Vect.make (3000.) 4000. 3500.) 1000. 2000. 7000. texture0 in
-  let box1 = Box.apply_rotation box1 (Rotation.make 0. 0.785 0.) in
+  let camera = Camera.make 30000. 0.8 in 
 
-  let plane1 = Plane.make (-5000.) texture3 in
-  let plane1 = Plane.apply_rotation plane1 (Rotation.make 1.6 0. 0.) in
+  let ambient = 0.0 in
 
-  let camera = Camera.make 20000. 0.8 in 
+  let light = Light.make 0.7 in
+  let light1 = Light.apply_rotation light (Rotation.make (pi /. 8.) 0. (pi /. 4.)) in
+  let light2 = Light.apply_rotation light (Rotation.make (pi /. 8.) 0. (-.pi /. 4.)) in
 
-  let light1 = Light.make 1. in
-  let light1 = Light.apply_rotation light1 (Rotation.make 1.6 0. 0.) in
+  let texture = Texture.make (Color.make_255 200 200 200) 0.4 0.6 10 in
+  let plane = Plane.make (-4100.) texture in
+  let plane1 = Plane.apply_rotation plane (Rotation.make 0. 0. 0.) in
 
-  make 0.6 camera [light1;] [sphere1;sphere2;sphere3;] [box1;] [] 
+  let texture = Texture.make (Color.make_255 150 150 150) 0.4 0.6 2 in
+  let box = Box.make (Vect.make (0.) 0. (-15000.)) 50000. 10000. 15. texture in
+  let box1 = Box.apply_rotation box (Rotation.make 0. (pi /. 4.) 0.) in
+  let box2 = Box.apply_rotation box (Rotation.make 0. (-.pi /. 4.) 0.) in
+  
+  let texture = Texture.make (Color.make_255 243 54 26) 1. 0.3 2 in
+  let sphere1 = Sphere.make (Vect.make (0.) 0. 0.) 4000. texture in
+
+  let texture = Texture.make (Color.make_255 114 172 216) 0.1 0.6 3 in
+  let earth = Sphere.make (Vect.make (0.) 0. 0.) 1200. texture in
+  let texture = Texture.make (Color.make_255 246 255 0) 1. 0.3 3 in
+  let moon = Sphere.make (Vect.make (0.) 0. 0.) 200. texture in
+
+
+  let moon = Sphere.apply_translation moon (Vect.make moonr 0. 0.) in
+  let moon = Sphere.apply_rotation moon (Rotation.make 0. (6. *. pi *. time /. 100.) 0.) in
+
+  let earth = Sphere.apply_translation earth (Vect.make earthr 0. 0.) in
+  let earth = Sphere.apply_rotation earth (Rotation.make 0. (2. *. pi *. time /. 100.) 0.) in
+  let moon = Sphere.apply_translation moon (Vect.make earthr 0. 0.) in
+  let moon = Sphere.apply_rotation moon (Rotation.make 0. (2. *. pi *. time /. 100.) 0.) in
+
+  make ambient camera [light1;light2] [sphere1; earth; moon;] [box1; box2;] [plane1;] 

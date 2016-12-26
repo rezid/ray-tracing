@@ -2,4 +2,6 @@ src/_build
 src/*.native
 src/*.byte
 test/*
-src/output.ppm.ppm
+images/*
+images_4k/*
+truc*

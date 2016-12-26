@@ -25,7 +25,7 @@ val planes : t -> Plane.t list
 val intersect : Vect.t -> Vect.t -> t -> Hit.t option
 
 (* crée la scene a partir d'un arbre AST *)
-val create : unit -> t
+val create : int -> t
 
 (* calcule la contribution des lumiéres sur la couleur du pixel *)
 val calcule_lighting : t -> Hit.t -> Color.t
