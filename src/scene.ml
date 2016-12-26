@@ -151,8 +151,8 @@ let create () =
   let plane2 = Plane.make normal2 (-5000.) texture3 in
 
   let camera = Camera.make 20000. 0.8 in 
-  let light1 = Light.make (Vect.normalise (Vect.make (-1.) (-0.) (-1.))) 1. in
-  let light2 = Light.make (Vect.normalise (Vect.make (1.) (0.) (0.))) 1. in
-  make 0.6 camera [light1;light2] [sphere1;sphere2;sphere3;] [box1;] [] 
 
+  let light1 = Light.make 1. in
+  let light1 = Light.apply_rotation light1 (Rotation.make 1.6 0. 0.) in
 
+  make 0.6 camera [light1;] [sphere1;sphere2;sphere3;] [box1;] [] 
