@@ -1,2 +1,0 @@
-avconv -r 10 -i ./images/truc%5d.ppm -b:v 1000k ./truc.mp4
-

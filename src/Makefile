@@ -5,7 +5,7 @@
 ## -cflag -unsafe : pour accélerer les accès aux tableaux
 ##                  une fois que le code fonctionne bien
 
-OPTS=-use-ocamlfind -use-menhir -pkg graphics -pkg parmap
+OPTS=-use-ocamlfind -use-menhir -pkg graphics
 
 opt:
 	ocamlbuild $(OPTS) ray.native

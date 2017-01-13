@@ -126,7 +126,7 @@ let rec ray_trace dir origin max scene =
       Color.may_overflow overflowed_color
 
 let create time  = 
-  let time = (float_of_int time) in
+  let time = (float_of_int time) /.10. in
   let pi = 4.0 *. atan 1.0 in
   let earthr = 8000. in
   let moonr = 1500. in
