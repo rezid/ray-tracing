@@ -40,7 +40,7 @@ let main () =
     let origin = Vect.make 0. 0. (Camera.viewdist (Scene.camera scene)) in
     (* open ppm picture file *)
     let file_name = "truc" ^ (Printf.sprintf "%05d" t) in
-    let output_file = Ppm.openfile !Command.hsize !Command.vsize ("../images/" ^ file_name) in
+    let output_file = Ppm.openfile !Command.hsize !Command.vsize ("../pics/" ^ file_name) in
     print_if_verbose "file output.ppm opened!";
     (* trace rays for each pixel in the output file *)
     for y = !Command.vsize / 2   downto 1 - !Command.vsize / 2  do
@@ -60,7 +60,7 @@ let main () =
   let list_t = buildList 0 !Command.anim in 
   Parmap.parmap ~ncores:!Command.max_proc_video create_image (Parmap.L(list_t));
   if !Command.anim > 0 then 
-    exit (Sys.command "avconv  -y -v quiet  -r 10 -i ../images/truc%5d.ppm -b:v 1000k ../truc.mp4")
+    exit (Sys.command "avconv  -y -v quiet  -r 10 -i ../pics/truc%5d.ppm -b:v 1000k ../pics/truc.mp4")
   else 
     exit 0
 
