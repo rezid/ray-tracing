@@ -1,5 +1,13 @@
 let print_if_verbose s = if (!Command.verbose) then print_endline (s)
 
+let buildList i n =
+  let rec aux acc i =
+    if i <= n then
+      aux (i::acc) (i+1)
+    else (List.rev acc)
+  in
+  aux [] i
+
 let read_scenario f =
   let buf = open_in f in
   let lexbuf = Lexing.from_channel buf in
@@ -48,10 +56,13 @@ let main () =
     print_if_verbose "color of each pixel calculated!";
     (* exit program *)
   in
-  for t = 0  to !Command.anim  do
-    create_image t
-  done;
-  exit 0
+
+  let list_t = buildList 0 !Command.anim in 
+  Parmap.parmap ~ncores:!Command.max_proc_video create_image (Parmap.L(list_t));
+  if !Command.anim > 0 then 
+    exit (Sys.command "avconv  -y -v quiet  -r 10 -i ../images/truc%5d.ppm -b:v 1000k ../truc.mp4")
+  else 
+    exit 0
 
 let () = 
   if not !Sys.interactive then main ()
